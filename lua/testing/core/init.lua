@@ -29,6 +29,7 @@ local state = {
 }
 
 return {
+  state = state,
   describe = create_describe(state),
   it = create_it(state),
   expect = create_expect(state),
