@@ -2,6 +2,8 @@ local config = require("testing/config")
 local lib = require("testing/lib")
 local c = lib.colors
 
+local ERROR_CONTEXT_LINE_COUNT = 3
+
 ---@class Reporter
 ---@field on_pass fun(result: TestResult)
 ---@field on_fail fun(result: TestResult)
@@ -18,6 +20,25 @@ local printf = function(format, ...)
   if not config.quiet then io.write(output) end
 end
 
+---@param file string
+---@param line number
+local get_error_context = function(file, line)
+  local lines = vim.fn.readfile(file)
+  local start_line = math.max(1, line - ERROR_CONTEXT_LINE_COUNT)
+  local end_line = math.min(#lines, line + ERROR_CONTEXT_LINE_COUNT)
+
+  local context_lines = {}
+  for i = start_line, end_line do
+    local is_error_line = i == line
+    local line_number = (is_error_line and c.BRIGHT_RED or "") .. string.format("%3d", i)
+    local line_content = (is_error_line and c.RED or "") .. lines[i]
+    local prefix = i == line and ">" or "|"
+    table.insert(context_lines, string.format(c.WHITE .. "%s %s %s" .. c.RESET, prefix, line_number, line_content))
+  end
+
+  return table.concat(context_lines, "\n")
+end
+
 local inspect = function(value)
   if type(value) == "string" then return value end
   return vim.inspect(value)
@@ -27,7 +48,16 @@ end
 local default = {
   on_pass = function(result)
     printf(
-      c.GREEN .. c.BOLD .. "PASS" .. c.RESET .. c.MAGENTA .. " %s" .. c.YELLOW .. " %s " .. c.BRIGHT_BLACK .. "(%dms)\n",
+      c.GREEN
+        .. c.BOLD
+        .. "PASS"
+        .. c.RESET
+        .. c.MAGENTA
+        .. " %s"
+        .. c.YELLOW
+        .. " %s "
+        .. c.BRIGHT_BLACK
+        .. "(%dms)\n",
       result.file,
       result.name,
       result.duration
@@ -64,10 +94,11 @@ local default = {
     printf(lib.text.format_indent(
       string.format(
         --
-        "Expected: "
+        c.CYAN
+          .. "Expected: "
           .. c.GREEN
           .. "%s"
-          .. c.RESET
+          .. c.CYAN
           .. "\nActual: "
           .. c.RED
           .. "%s\n",
@@ -76,6 +107,12 @@ local default = {
       ),
       4
     ))
+    printf(
+      lib.text.format_indent(
+        string.format("%s\n", get_error_context(lib.path.resolve(result.file), result.error.line)),
+        2
+      )
+    )
   end,
   on_end = function(results)
     local failed_count = #vim.tbl_filter(function(result)
