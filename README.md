@@ -1,6 +1,8 @@
 # testing.nvim
 
-**testing.nvim** is a minimal testing solution for Neovim plugins.
+**testing.nvim** is a minimal testing solution for Lua code running in Neovim.
+
+![screenshot](https://github.com/3rd/testing.nvim/assets/59587503/3e4bc034-2376-40d5-bbe0-baa6686b71e7)
 
 ### Setup
 
