@@ -38,12 +38,13 @@ local default_config = {
 
 ### Usage
 
-This is what the plugin exports at its root:
+This is what the plugin exports:
 
 - `setup(config?)` - setup function, needs to be called to set globals
 - `describe("...", fn)` - declare a test group / suite
 - `it("...", fn)` - declare a test inside a test group
 - `expect(actual).toSomething(...)` - make an assertion
+- `spy(target, "key")` - spy & mock functions
 
 Check out these files for the implementation:
 
@@ -58,6 +59,11 @@ Check out these files for the implementation:
 - `expect(actual).toContain(expected)` - `vim.tbl_contains(actual, expected)`
 - `expect(actual).toMatch(pattern)` - `string.find(actual, expected)`
 - `expect(actual).toThrow(message?)`- expect `actual()` to throw (w/ optional error)
+- `expect(spy).toHaveBeenCalled()`
+- `expect(spy).toHaveBeenCalledTimes(n)`
+- `expect(spy).toHaveBeenCalledWith(...)`
+- `expect(spy).toHaveBeenLastCalledWith(...)`
+- `expect(spy).toHaveBeenNthCalledWith(n, ...)`
 
 **Negated assertions**
 
@@ -86,9 +92,46 @@ describe("expect", function()
 end)
 ```
 
+**Spies/mocks**
+
+To spy & mock a function, use the exported `.spy(target, "key")` helper.
+\
+It returns a `Spy` object on which you can call:
+
+- `spy.clear()` - to clear the stored calls from memory
+- `spy.reset()` - to clear the mocked implementation / return value and internal state
+- `spy.destroy()` - to kill the spy and restore the original function
+- `spy.mockImplementation(fn)`
+- `spy.mockImplementationOnce(fn)`
+- `spy.mockReturnValue(value)`
+- `spy.mockReturnValueOnce(value)`
+
+```lua
+local t = require("testing")
+
+describe("milkshake", function()
+  it("brings all the boys to the yard", function()
+    local target = {
+      bring_boys = function()
+        return false
+      end,
+    }
+    local spy = t.spy(target, "bring_boys")
+
+    expect(target.bring_boys()).toBe(false)
+    expect(spy).toHaveBeenCalled()
+
+    spy.mockReturnValueOnce(true)
+    expect(target.bring_boys()).toBe(true)
+    expect(target.bring_boys()).toBe(false)
+
+    expect(spy).toHaveBeenCalledTimes(3)
+  end)
+end)
+```
+
 ### WIP
 
-- test runner, exit codes
-- spies & mocks
+- test runner
 - child process wrapping (rpc)
 - GH action
