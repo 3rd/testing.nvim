@@ -8,7 +8,7 @@ local c = lib.colors
 ---@field on_end fun(results: TestResult[])
 
 local printf = function(format, ...)
-  local output = string.format(c.RESET .. format, ...)
+  local output = string.format(c.RESET .. format .. c.RESET, ...)
   if config.output_file then
     local file = io.open(config.output_file, "a")
     if not file then error("Failed to open output file: " .. config.output_file) end
@@ -35,8 +35,18 @@ local default = {
   end,
   on_fail = function(result)
     printf(
-      c.BRIGHT_RED .. c.BOLD .. "PASS" .. c.RESET .. c.MAGENTA .. " %s" .. c.YELLOW .. " %s " .. c.BRIGHT_BLACK .. "(%dms)\n",
+      c.BRIGHT_RED
+        .. c.BOLD
+        .. "FAIL"
+        .. c.RESET
+        .. c.MAGENTA
+        .. " %s:%d"
+        .. c.YELLOW
+        .. " %s "
+        .. c.BRIGHT_BLACK
+        .. "(%dms)\n",
       result.file,
+      result.error.line,
       result.name,
       result.duration
     )

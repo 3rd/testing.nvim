@@ -24,8 +24,9 @@ local setup = function(user_config)
 end
 
 return {
+  setup = setup,
   describe = core.describe,
   expect = core.expect,
   it = core.it,
-  setup = setup,
+  spy = core.spy,
 }

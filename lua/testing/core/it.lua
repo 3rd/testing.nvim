@@ -17,7 +17,7 @@ local create_it = function(state)
     ---@type TestResult
     local test_result = {
       file = state.current_suite.file,
-      name = string.format("%s / %s", state.current_suite.suite_name, test_name),
+      name = string.format("%s / %s", state.current_suite.suite_name, test_name):gsub("%%", "%%%%"),
       error = state.current_test.error,
       duration = duration_ms,
       stacktrace = stacktrace,
