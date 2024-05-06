@@ -118,6 +118,10 @@ local default = {
     local failed_count = #vim.tbl_filter(function(result)
       return result.error
     end, results)
+    local duration = 0
+    for _, result in ipairs(results) do
+      duration = duration + result.duration
+    end
     printf(
       "Ran "
         .. c.CYAN
@@ -131,7 +135,7 @@ local default = {
         .. (failed_count > 0 and c.RED or c.GREEN)
         .. "%d\n",
       #results,
-      results[1].duration,
+      duration,
       #results - failed_count,
       failed_count
     )
