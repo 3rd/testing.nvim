@@ -9,6 +9,8 @@ local setup = function(user_config)
     _G.describe = core.describe
     _G.expect = core.expect
     _G.it = core.it
+    _G.before_each = core.hooks.before_each
+    _G.after_each = core.hooks.after_each
   end
 
   vim.api.nvim_create_autocmd("VimLeavePre", {

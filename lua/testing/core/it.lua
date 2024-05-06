@@ -10,9 +10,17 @@ local create_it = function(state)
     local stacktrace = lib.stacktrace.get_stack_trace(1)
     state.current_test = { test_name = test_name }
 
+    for _, before_each_fn in ipairs(state.current_suite.hooks.before_each) do
+      before_each_fn()
+    end
+
     local startTime = vim.loop.hrtime()
     fn()
     local duration_ms = (vim.loop.hrtime() - startTime) / 1000000
+
+    for _, after_each_fn in ipairs(state.current_suite.hooks.after_each) do
+      after_each_fn()
+    end
 
     ---@type TestResult
     local test_result = {
