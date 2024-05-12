@@ -3,6 +3,11 @@ local format_indent = function(str, level)
   return insert .. str:gsub("\n(%S)", "\n" .. insert .. "%1")
 end
 
+local escape = function(str)
+  return str:gsub("%%", "%%%%")
+end
+
 return {
   format_indent = format_indent,
+  escape = escape,
 }

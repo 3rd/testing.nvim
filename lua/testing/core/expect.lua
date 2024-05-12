@@ -265,9 +265,9 @@ local create_expect = function(state)
 
     local handle_error = function(error_message, assert_actual, assert_expected)
       local stacktrace = lib.stacktrace.get_stack_trace(2)
-      local escaped_error = error_message:gsub("%%", "%%%%")
-      local escaped_actual = type(assert_actual) == "string" and assert_actual:gsub("%%", "%%%%") or assert_actual
-      local escaped_expected = type(assert_expected) == "string" and assert_expected:gsub("%%", "%%%%")
+      local escaped_error = lib.text.escape(error_message)
+      local escaped_actual = type(assert_actual) == "string" and lib.text.escape(assert_actual) or assert_actual
+      local escaped_expected = type(assert_expected) == "string" and lib.text.escape(assert_expected)
         or assert_expected
       state.current_test.error = {
         message = escaped_error,

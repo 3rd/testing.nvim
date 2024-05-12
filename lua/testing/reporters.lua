@@ -108,9 +108,11 @@ local default = {
       4
     ))
     printf(
-      lib.text.format_indent(
-        string.format("%s\n", get_error_context(lib.path.resolve(result.file), result.error.line)),
-        2
+      lib.text.escape(
+        lib.text.format_indent(
+          string.format("%s\n", get_error_context(lib.path.resolve(result.file), result.error.line)),
+          2
+        )
       )
     )
   end,
