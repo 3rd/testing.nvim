@@ -16,6 +16,10 @@ To set this up for non-interactive testing with Neovim (`:help -l`):
 2. Launch Neovim with the bootstrap file loaded as a session script and the test file.
    - `nvim -S ./bootstrap.lua -l ./lua/your_spec.lua`
 
+**Setup examples**
+
+- [time-tracker.nvim](https://github.com/3rd/time-tracker.nvim)
+
 ### Configuration
 
 Configuration schema and default values:
@@ -46,7 +50,10 @@ This is what the plugin exports:
 - `describe("...", fn)` - declare a test group / suite
 - `it("...", fn)` - declare a test inside a test group
 - `expect(actual).toSomething(...)` - make an assertion
+- `before_each(fn)`, `after_each(fn)` - hooks
 - `spy(target, "key")` - spy & mock functions
+
+If `inject_globals == true`, the following exports become globals: `describe`, `it`, `expect`, `before_each`, `after_each`
 
 Check out these files for the implementation:
 

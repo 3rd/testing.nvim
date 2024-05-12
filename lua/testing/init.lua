@@ -31,4 +31,6 @@ return {
   expect = core.expect,
   it = core.it,
   spy = core.spy,
+  before_each = core.before_each,
+  after_each = core.after_each,
 }
